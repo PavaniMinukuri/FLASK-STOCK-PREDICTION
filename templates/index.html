@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Forecast</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        .form-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-container input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            margin-right: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-container input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .forecast-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .forecast-table th, .forecast-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .forecast-table th {
+            background-color: #f4f4f4;
+        }
+
+        .forecast-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .forecast-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .chart-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+        }
+
+        .result-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .result-link a:hover {
+            text-decoration: underline;
+        }
+
+        .no-results {
+            text-align: center;
+            color: red;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .form-container input[type="submit"] {
+            display: {% if forecast_results %}none{% else %}block{% endif %};
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>STOCK TRADING AI</h1>
+        <h1>Stock Forecast & RSI Analysis</h1>
+
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Enter Stock Symbol</h2>
+            <form method="POST">
+                <div class="input-container">
+                    <input type="text" name="symbol" placeholder="Enter Symbol (e.g. AAPL)" required>
+                    <input type="submit" value="Get Forecast">
+                </div>
+            </form>
+        </div>
+
+        {% if error %}
+            <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        {% if symbol %}
+            <h3>Forecast for: {{ symbol }}</h3>
+        {% endif %}
+
+        {% if forecast_results %}
+            <div>
+                {% for result in forecast_results %}
+                    <h4>Forecasted Values for {{ result.symbol }}:</h4>
+                    <div>{{ result.forecast_values|safe }}</div>
+                    <div class="chart-container">
+                        <h4>Forecasted Stock Prices & RSI for {{ result.symbol }}</h4>
+                        <img src="data:image/png;base64,{{ result.chart }}" alt="Forecasted Prices and RSI">
+                    </div>
+                    <div class="result-link">
+                        <p><a href="{{ url_for('index') }}">Enter another symbol</a></p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif symbol %}
+            <div class="no-results">
+                <p>No forecast results found. Please check the stock symbol or try again later.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2025 Stock Forecasting Application</p>
+    </div>
+</body>
+</html>
